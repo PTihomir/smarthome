@@ -1,7 +1,7 @@
 {
-  "name": "change name",
+  "name": "seed-project",
   "version": "0.0.1",
-  "description": "change description",
+  "description": "Basic project",
   "main": "bin/web-server.js",
   "bin": {
     "jeporady": "game-model.js"
