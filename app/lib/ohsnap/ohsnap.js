@@ -11,23 +11,23 @@
 function ohSnap(text, color, icon) {
   // text : message to show (HTML tag allowed)
   // Available colors : red, green, blue, orange, yellow --- add your own!
-  
+
   // Set some variables
   var time = '5000';
   var $container = $('#ohsnap');
-  
+
   var icon_markup = "";
-  
+
   if(icon) {
-    icon_markup = "<span class='" + icon + "'></span> ";  
+    icon_markup = "<span class='" + icon + "'></span> ";
   }
-  
+
   // Generate the HTML
   var html = '<div class="alert alert-' + color + '">' + icon_markup + text + '</div>';
 
   // Append the label to the container
   $container.append(html);
-  
+
   // After 'time' seconds, the animation fades out
   setTimeout(function () {
     ohSnapX($container.children('.alert').first());
@@ -37,7 +37,7 @@ function ohSnap(text, color, icon) {
 function ohSnapX(element) {
   // Called without argument, the function removes all alerts
   // element must be a jQuery object
-  
+
   if (typeof element !== "undefined" ) {
     element.remove();
   } else {
@@ -47,6 +47,6 @@ function ohSnapX(element) {
 
 // Remove the notification on click
 
-$('.alert').on('click', function() { 
+$('.alert').on('click', function() {
   ohSnapX($(this))
 });
