@@ -8,7 +8,14 @@ var util = require('util'),
 
 var DEFAULT_PORT = 3000;
 
+var DEFAULT_DIRECTORY = './';
+
 function main(argv) {
+
+    if (!!argv[3]) {
+        DEFAULT_DIRECTORY = argv[3];
+    }
+
     new HttpServer({
         'GET': createServlet(StaticServlet),
         'HEAD': createServlet(StaticServlet)
@@ -100,12 +107,17 @@ StaticServlet.prototype.handleRequest = function(req, res) {
        return String.fromCharCode(parseInt(hex, 16));
     });
 
-
     var parts = path.split('/');
     if (parts[parts.length-1].charAt(0) === '.')
       return self.sendForbidden_(req, res, path);
     if (parts.length === 2 && parts[1] === '')
       return self.sendFile_(req, res, path + 'app/index.html');
+
+    // TODO Added for Viktor :)
+    if (parts.length === 2 && parts[1] === 'test')
+      return self.sendText_(req, res, path);
+
+    path = DEFAULT_DIRECTORY + path;
 
     fs.stat(path, function(err, stat) {
         if (err)
@@ -114,6 +126,14 @@ StaticServlet.prototype.handleRequest = function(req, res) {
           return self.sendDirectory_(req, res, path);
         return self.sendFile_(req, res, path);
     });
+};
+
+StaticServlet.prototype.sendText_ = function(req, res, error) {
+    res.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+    res.write('Hello');
+    res.end();
 };
 
 StaticServlet.prototype.sendError_ = function(req, res, error) {
