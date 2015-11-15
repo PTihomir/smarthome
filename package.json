@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "express": "*",
+    "moment": "^2.10.6",
     "requirejs": "*",
     "socket.io": "*"
   },

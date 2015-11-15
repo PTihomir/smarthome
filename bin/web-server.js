@@ -4,7 +4,8 @@ var util = require('util'),
     http = require('http'),
     fs = require('fs'),
     url = require('url'),
-    events = require('events');
+    events = require('events'),
+    post_servlet = require('./post_servlet.js');
 
 var DEFAULT_PORT = 3000;
 
@@ -18,7 +19,8 @@ function main(argv) {
 
     new HttpServer({
         'GET': createServlet(StaticServlet),
-        'HEAD': createServlet(StaticServlet)
+        'HEAD': createServlet(StaticServlet),
+        'POST': createServlet(post_servlet),
     }).start(Number(argv[2]) || DEFAULT_PORT);
 
 }

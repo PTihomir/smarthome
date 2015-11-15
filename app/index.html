@@ -6,12 +6,14 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Seed page</title>
+        <title>Smarthome</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
+        <link rel="stylesheet" href="lib/bootstrap-datepicker/1.4.0/css/bootstrap-datepicker.min.css">
+        <link rel="stylesheet" href="lib/bootstrap-timepicker/0.5.1/css/bootstrap-timepicker.min.css">
         <link rel="stylesheet" href="css/base.css">
     </head>
     <body>
@@ -20,37 +22,60 @@
         <![endif]-->
         <div id="ohsnap"></div>
 
-        <nav class="navbar">
-            <div class="navbar-inner">
-                <a class="brand" href="#">Seed project</a>
-                <ul class="nav">
-                    <li><a href="#">Option 1</a></li>
-                    <li><a href="#">Option 2</a></li>
-                    <li><a href="#">Option 3</a></li>
-                </ul>
+        <script type="text/x-handlebars"  data-template-name="index">
+            <div class="container">
+                <div class="row">
+                    <form role="form" class="form-inline">
+                        {{view 'datepicker' placeholder="Dátum" value=model.date class="form-control"}}
+                        {{view 'timepicker' placeholder="Ido" value=model.time}}
+                        <label>Draga: {{input type="number" placeholder="Draga" value=model.day_period id="" class="form-control"}}</label>
+                        <label>Olcso: {{input type="number" placeholder="Ido" value=model.night_period id="" class="form-control"}}</label>
+                        <button class="btn" type="button" {{action 'saveElectricity'}}>Submit</button>
+                    </form>
+                </div>
+                <div class="row">
+                    <button class="btn" type="button" {{action 'fetchElectricity'}}>Sync</button>
+                </div>
+                <div class="row">
+                    {{view 'linechart' value=model.graph}}
+                </div>
+                <div class="row">
+                    <ul>
+                        {{#each entry in model.graph}}
+                        <li>{{entry.datetime}} - {{entry.day_period}} - {{entry.night_period}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+
             </div>
-        </nav>
-
-        <div class="container">
-            <div class="row">
-
-            </div>
-
-        </div>
+        </script>
 
         <!-- Library files -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="lib/jquery/1.10.2/jquery-1.10.2.min.js"><\/script>')</script>
 
         <script src="lib/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+        <script src="lib/bootstrap-datepicker/1.4.0/js/bootstrap-datepicker.min.js"></script>
+        <script src="lib/bootstrap-timepicker/0.5.1/js/bootstrap-timepicker.min.js"></script>
         <script src="lib/moment.js/2.2.1/moment+langs.min.js"></script>
         <script src="lib/ohsnap/ohsnap.js"></script>
         <script src="lib/jquery.mustache.js/jquery.mustache.js"></script>
+        <script src="lib/d3/3.4.1/d3.v3.min.js"></script>
+
+        <script src="lib/handlebars/1.0.0/handlebars-1.0.0.js"></script>
+        <script src="lib/ember/1.6.0-beta.2/ember.js"></script>
 
         <script src="js/plugins.js"></script>
 
         <!-- Project files -->
-        <script src="js/main.js"></script>
+        <script src="js/application.js"></script>
+        <script src="js/route.js"></script>
+        <script src="js/controllers/index-controller.js"></script>
+
+        <script src="js/views/datepicker.js"></script>
+        <script src="js/views/timepicker.js"></script>
+        <script src="js/views/graph.js"></script>
+
 
     </body>
 </html>
