@@ -1,6 +1,6 @@
-var path = require('path'),
-  webpack = require('webpack'),
-  ExtractTextPlugin = require('extract-text-webpack-plugin');
+// var path = require('path');
+//   webpack = require('webpack'),
+//   ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var plugins = [
   // new webpack.HotModuleReplacementPlugin(),
@@ -13,12 +13,14 @@ var plugins = [
 
 module.exports = {
   entry: {
-    // Recipe: './app/views/recipe.js',
     main: [
-      'webpack/hot/dev-server',
-      'webpack-dev-server/client?http://localhost:8080',
+      // 'webpack/hot/dev-server',
+      // 'webpack-dev-server/client?http://localhost:8080',
       './app/main.js',
     ],
+    // test: [
+    //   './app/test.js',
+    // ],
   },
   output: {
     path: './app/bin/',
@@ -38,11 +40,15 @@ module.exports = {
       { test: /\.scss$/, loader: 'style-loader!css-loader?modules!sass-loader' }, // use ! to chain loaders
       // { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!sass-loader')}, // use ! to chain loaders
       { test: /\.css$/, loader: 'style-loader!css-loader?modules' },
+      // { test: /\.svg(\?.*)?$/, loader: 'file-loader?name=[name].[ext]' },
     ],
   },
   resolve: {
     // you can now require('file') instead of require('file.coffee')
     // extensions: ['', '.js', '.json', '.coffee']
+  },
+  resolveLoader: {
+    // root: [path.resolve('./build')]
   },
   plugins: plugins,
 };

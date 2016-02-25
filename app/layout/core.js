@@ -9,7 +9,7 @@ export default class CoreLayout extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      selectedByIndex: -1,
+      selectedByIndex: 0,
     };
   }
 
@@ -27,9 +27,8 @@ export default class CoreLayout extends Component {
 
   render () {
     if (this.state.selectedByIndex !== -1) {
-      let selectedRecipe = this.props.recipes[this.state.selectedByIndex];
-      console.log(selectedRecipe);
       return (<RecipeDetails
+                icon={this.state.selectedByIndex}
                 data={this.props.recipes[this.state.selectedByIndex]}
                 onClose={this.unselectRecipe.bind(this)} />);
     } else {
