@@ -7,9 +7,9 @@ export default class Plot extends Component {
     boundaries: PropTypes.object,
     width: PropTypes.number,
     height: PropTypes.number,
-    data: PropTypes.array.isRequired,
+    data: PropTypes.array,
     xDomain: PropTypes.array,
-    lineData: PropTypes.array.isRequired,
+    lineData: PropTypes.array,
     scaleX: PropTypes.func,
     scaleY: PropTypes.func, // []
     stacked: PropTypes.bool.isRequired,
@@ -26,12 +26,21 @@ export default class Plot extends Component {
     height: 300,
     verticalGuidlines: [],
     horizontalGuidlines: [],
+    data: [],
+    lineData: [],
   };
 
-  render() {
-    let translate;
+  validData() {
+    return this.props.lineData.length || this.props.data.length;
+  }
 
-    const barGroupWidth = this.props.width / (this.props.xDomain[1] - this.props.xDomain[0] + 1);
+  render() {
+    if (!this.validData()) {
+      return (<g />);
+    }
+
+    // const barGroupWidth = this.props.width / (this.props.xDomain[1] - this.props.xDomain[0] + 1);
+    const barGroupWidth = this.props.width / 6;
 
     const lines = this.props.lineData.map((series, idx) => {
       const values = series.values.map(point => [this.props.scaleX(point.x), this.props.scaleY(point.y)]);
@@ -48,7 +57,7 @@ export default class Plot extends Component {
           dataIndex={idx}
           width={barGroupWidth}
           height={this.props.height}
-          leftOffset={barGroupWidth * a.x}
+          leftOffset={this.props.scaleX(a.x) - barGroupWidth / 2}
           values={values}
           stacked={this.props.stacked}
           onEnter={this.props.onEnterPoint}
@@ -81,7 +90,7 @@ export default class Plot extends Component {
     });
 
     return (
-      <g transform={translate}
+      <g
         onMouseEnter={this.props.onEnterPlot}
         onMouseLeave={this.props.onLeavePlot}>
         {horGuides}

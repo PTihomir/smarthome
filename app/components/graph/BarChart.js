@@ -1,16 +1,17 @@
 import React, {Component, PropTypes} from 'react';
+import moment from 'moment';
 import d3 from 'd3';
 import { StyleSheet } from 'react-look';
 import Axis from './Axis';
 import Plot from './Plot';
 import Tooltip from './Tooltip';
-import { getTicks } from './helper';
+// import { getTicks } from './helper';
 
 const defaultChartColors = ['#009688', '#2196F3', '#E91E63', '#F44336'];
 
-function range(start, end) {
-  return Array(end - start).fill().map((x, i) => start + i);
-}
+// function range(start, end) {
+//   return Array(end - start).fill().map((x, i) => start + i);
+// }
 
 export default class BarChart extends Component {
   static propTypes = {
@@ -27,26 +28,26 @@ export default class BarChart extends Component {
     width: 500,
     height: 300,
     margin: { top: 10, right: 10, bottom: 40, left: 60 },
-    data: [
-      { name: 'Series 0',
-        values:[[0, 10], [1, 8], [2, 12], [3, 1], [4, 7], [5, 7], [7, 11],
-        [8, 11], [9, 3], [10, 4], [11, 5], [12, 6], [13, 7], [14, 8]] },
-      { name: 'Series 1',
-        values:[[0, 1], [1, 2], [2, 3], [3, 0], [4, 1], [5, 2], [7, 3],
-        [8, 0], [9, 1], [10, 2], [11, 3], [12, 0], [13, 0], [14, 1]] },
-      { name: 'Series 2',
-        values:[[0, 4], [1, 5], [2, 0], [3, 3], [4, 4], [5, 0], [7, 2],
-        [8, 3], [9, 0], [10, 1], [11, 2], [12, 0], [13, 1], [14, 0]] },
-    ],
-    lineData: [{
-      name: 'Series 0',
-      values:[[0, 10], [1, 8], [2, 12], [3, 1], [4, 7], [5, 7], [7, 11],
-      [8, 11], [9, 3], [10, 4], [11, 5], [12, 6], [13, 7], [14, 8]],
-    }, {
-      name: 'Series 1',
-      values:[[0, 2], [1, 8], [2, 3], [3, 7], [4, 4], [5, 6], [7, 5],
-      [8, 5], [9, 4], [10, 6], [11, 3], [12, 7], [13, 2], [14, 8]],
-    }],
+    // data: [
+    //   { name: 'Series 0',
+    //     values:[[0, 10], [1, 8], [2, 12], [3, 1], [4, 7], [5, 7], [7, 11],
+    //     [8, 11], [9, 3], [10, 4], [11, 5], [12, 6], [13, 7], [14, 8]] },
+    //   { name: 'Series 1',
+    //     values:[[0, 1], [1, 2], [2, 3], [3, 0], [4, 1], [5, 2], [7, 3],
+    //     [8, 0], [9, 1], [10, 2], [11, 3], [12, 0], [13, 0], [14, 1]] },
+    //   { name: 'Series 2',
+    //     values:[[0, 4], [1, 5], [2, 0], [3, 3], [4, 4], [5, 0], [7, 2],
+    //     [8, 3], [9, 0], [10, 1], [11, 2], [12, 0], [13, 1], [14, 0]] },
+    // ],
+    // lineData: [{
+    //   name: 'Series 0',
+    //   values:[[0, 10], [1, 8], [2, 12], [3, 1], [4, 7], [5, 7], [7, 11],
+    //   [8, 11], [9, 3], [10, 4], [11, 5], [12, 6], [13, 7], [14, 8]],
+    // }, {
+    //   name: 'Series 1',
+    //   values:[[0, 2], [1, 8], [2, 3], [3, 7], [4, 4], [5, 6], [7, 5],
+    //   [8, 5], [9, 4], [10, 6], [11, 3], [12, 7], [13, 2], [14, 8]],
+    // }],
   };
 
   state = {
@@ -59,14 +60,14 @@ export default class BarChart extends Component {
   };
 
   componentWillMount() {
-    this.processSeries(this.props.data);
+    this.processSeries(this.props.data, this.props.lineData);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.processSeries(nextProps.data);
+    this.processSeries(nextProps.data, nextProps.lineData);
   }
 
-  processSeries(series) {
+  processSeries(barSeries, lineSeries) {
     let groupedValues = {};
     let lineValues = [];
     let minX = Infinity;
@@ -75,7 +76,7 @@ export default class BarChart extends Component {
     let maxY = -Infinity;
 
     // go over bar chart data
-    this.props.data.forEach(({values, ...seriesInfo}, idx) => {
+    barSeries.forEach(({values, ...seriesInfo}, idx) => {
       seriesInfo.color = seriesInfo.color || defaultChartColors[idx % 4];
 
       values.forEach((point) => {
@@ -119,49 +120,64 @@ export default class BarChart extends Component {
       };
     });
 
-    console.log(groupedValues);
+    if (lineSeries) {
+      // go over line chart data
+      lineValues = lineSeries.map(({values, ...seriesInfo}, idx) => {
+        seriesInfo.color = seriesInfo.color || defaultChartColors[idx % 4];
 
-    // go over line chart data
-    lineValues = this.props.lineData.map(({values, ...seriesInfo}, idx) => {
-      seriesInfo.color = seriesInfo.color || defaultChartColors[idx % 4];
+        const processedValues = values.map((point) => {
+          let x, y;
+          if (!point.length) {
+            x = point.x;
+            y = point.y;
+          } else {
+            x = point[0];
+            y = point[1];
+          }
 
-      const processedValues = values.map((point) => {
-        let x, y;
-        if (!point.length) {
-          x = point.x;
-          y = point.y;
-        } else {
-          x = point[0];
-          y = point[1];
-        }
+          if (x < minX) { minX = x; }
+          if (x > maxX) { maxX = x; }
+          if (y < minY) { minY = y; }
+          if (y > maxY) { maxY = y; }
 
-        if (x < minX) { minX = x; }
-        if (x > maxX) { maxX = x; }
-        if (y < minY) { minY = y; }
-        if (y > maxY) { maxY = y; }
+          return {
+            x,
+            y,
+            point,
+            series: seriesInfo,
+          };
+        });
 
         return {
-          x,
-          y,
-          point,
-          series: seriesInfo,
+          ...seriesInfo,
+          values: processedValues,
         };
       });
+    }
 
-      return {
-        ...seriesInfo,
-        values: processedValues,
-      };
-    });
+    if (groupedValues.length === 0 && lineValues.length === 0) {
+      return;
+    }
 
     const scaleX = this.state.scaleX;
     const scaleY = this.state.scaleY;
 
-    const verticalTicks = getTicks([minY, maxY], 5);
-    const horizontalTicks = range(minX, maxX + 1);
+    scaleY.domain([minY, maxY]);
+    scaleY.nice(5);
 
-    scaleX.domain([minX - 0.5, maxX + 0.5]);
-    scaleY.domain([verticalTicks[0], verticalTicks[5]]);
+    const verticalTicks = scaleY.ticks(5);
+
+    const horizontalTicks = [];
+    let month = moment(minX).startOf('month');
+    let i = 0;
+    while (month.isBefore(maxX) && i < 10) {
+      horizontalTicks.push(month.valueOf());
+      month.add(1, 'month');
+      i++;
+    }
+    horizontalTicks.push(month.valueOf());
+
+    scaleX.domain([horizontalTicks[0] - 12 * 24 * 60 * 60 * 1000, horizontalTicks[horizontalTicks.length - 1] + 12 * 24 * 60 * 60 * 1000]);
 
     this.setState({
       values: groupedValues,
@@ -183,7 +199,7 @@ export default class BarChart extends Component {
 
     const tooltip = (
       <table>
-        <caption>{ points.x}</caption>
+        <caption>{ moment(parseInt(points.x, 10)).format('YYYY MMM')}</caption>
         <tbody>
         { points.values.map((point, idx) => {
           return (
@@ -192,7 +208,7 @@ export default class BarChart extends Component {
                 {`${point.series.name}`}
               </td>
               <td key="value">
-                {`${point.y} kWh`}
+                {`${Math.round(point.y)} kWh`}
               </td>
             </tr>);
         })
@@ -254,7 +270,8 @@ export default class BarChart extends Component {
               height={margin.bottom}
               width={innerWidth}
               position="bottom"
-              label="kWh"
+              type="datetime"
+              label="Month"
               ticks={this.state.horizontalTicks}
               scale={this.state.scaleX}
               />

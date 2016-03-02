@@ -62,7 +62,6 @@ function demo() {
     { timestamp: moment([2015, 11, 8, 8, 15]).valueOf(), high_cost: 61683, low_cost: 80411 },
     { timestamp: moment([2015, 11, 8, 23, 50]).valueOf(), high_cost: 61686, low_cost: 80414 },
     { timestamp: moment([2015, 11, 14, 9, 31]).valueOf(), high_cost: 61712, low_cost: 80636 },
-    { timestamp: moment([2015, 11, 14, 9, 31]).valueOf(), high_cost: 61712, low_cost: 80636 },
     { timestamp: moment([2015, 11, 16, 19, 24]).valueOf(), high_cost: 61727, low_cost: 80706 },
     { timestamp: moment([2015, 11, 25, 11, 3]).valueOf(), high_cost: 61779, low_cost: 81033 },
     { timestamp: moment([2015, 11, 27, 10, 21]).valueOf(), high_cost: 61794, low_cost: 81110 },
@@ -77,6 +76,13 @@ function demo() {
     { timestamp: moment([2016, 1, 9, 8, 25]).valueOf(), high_cost: 62086, low_cost: 82687 },
     { timestamp: moment([2016, 1, 10, 17, 26]).valueOf(), high_cost: 62097, low_cost: 82714 },
     { timestamp: moment([2016, 1, 11, 9, 49]).valueOf(), high_cost: 62100, low_cost: 82743 },
+    { timestamp: moment([2016, 1, 13, 10, 15]).valueOf(), high_cost: 62115, low_cost: 82798 },
+    { timestamp: moment([2016, 1, 13, 19, 57]).valueOf(), high_cost: 62120, low_cost: 82798 },
+    { timestamp: moment([2016, 1, 17, 9, 43]).valueOf(), high_cost: 62144, low_cost: 82913 },
+    { timestamp: moment([2016, 1, 19, 18, 45]).valueOf(), high_cost: 62159, low_cost: 82961 },
+    { timestamp: moment([2016, 1, 21, 9, 25]).valueOf(), high_cost: 62170, low_cost: 83009 },
+    { timestamp: moment([2016, 1, 22, 13, 41]).valueOf(), high_cost: 62174, low_cost: 83028 },
+    { timestamp: moment([2016, 1, 24, 8, 17]).valueOf(), high_cost: 62183, low_cost: 83083 },
   ])
   .then(() => {
     return store.processElectricity();

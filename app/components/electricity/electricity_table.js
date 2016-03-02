@@ -96,7 +96,7 @@ export default class ElectricityTable extends Component {
     }
 
     return (
-      <Table selectable={false} height="300px">
+      <Table selectable={false} height="200px">
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
             <TableHeaderColumn>Datetime</TableHeaderColumn>

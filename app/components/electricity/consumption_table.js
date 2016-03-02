@@ -1,6 +1,5 @@
 'use strict';
 import React, {Component, PropTypes} from 'react';
-import request from 'superagent';
 import moment from 'moment';
 import ElectricityConsItem from './item_consumption';
 import RaisedButton from 'material-ui/lib/raised-button';
@@ -28,26 +27,7 @@ export default class ConsumptionTable extends Component {
   };
 
   render() {
-    const object_cons = this.props.list.reduce((prevValue, item) => {
-      const timestamp = moment(item.timestamp).startOf('month').valueOf();
-
-      if (!prevValue[timestamp]) {
-        prevValue[timestamp] = {
-          timestamp: timestamp,
-          day: 0,
-          night: 0,
-        };
-      }
-
-      prevValue[timestamp].day += item.day;
-      prevValue[timestamp].night += item.night;
-
-      return prevValue;
-    }, {});
-
-    const list = Object.keys(object_cons).map((key) => {
-      return object_cons[key];
-    });
+    const list = this.props.list;
 
     let body;
 
@@ -64,7 +44,8 @@ export default class ConsumptionTable extends Component {
     }
 
     return (
-      <Table selectable={false}>
+      <Table selectable={false}
+        height="200px">
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
             <TableHeaderColumn>Month</TableHeaderColumn>

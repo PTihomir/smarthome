@@ -1,7 +1,6 @@
 'use strict';
 import React, {Component, PropTypes} from 'react';
-import request from 'superagent';
-import moment from 'moment';
+// import moment from 'moment';
 import ConsumptionTable from '../../components/electricity/consumption_table';
 import ElectricityTable from '../../components/electricity/electricity_table';
 

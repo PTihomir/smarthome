@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import moment from 'moment';
 // import d3 from 'd3';
 
 class VerticalAxis extends Component {
@@ -8,7 +9,7 @@ class VerticalAxis extends Component {
     position: PropTypes.string.isRequired,
     label: PropTypes.string,
     scale: PropTypes.func.isRequired,
-    ticks: PropTypes.array.isRequired,
+    ticks: PropTypes.array,
     tickSize: PropTypes.number,
     tickFormat: PropTypes.func,
   };
@@ -21,6 +22,10 @@ class VerticalAxis extends Component {
   };
 
   getTicks() {
+    if (!this.props.ticks) {
+      return;
+    }
+
     const pos = this.props.position;
     const scale = this.props.scale;
     const tickSize = this.props.tickSize;
@@ -85,7 +90,7 @@ class HorizontalAxis extends Component {
     position: PropTypes.string.isRequired,
     label: PropTypes.string,
     scale: PropTypes.func.isRequired,
-    ticks: PropTypes.array.isRequired,
+    ticks: PropTypes.array,
     tickSize: PropTypes.number,
     tickFormat: PropTypes.func,
   };
@@ -98,6 +103,9 @@ class HorizontalAxis extends Component {
   };
 
   getTicks() {
+    if (!this.props.ticks) {
+      return;
+    }
     const tickSize = this.props.tickSize;
     const pos = this.props.position;
     const scale = this.props.scale;
@@ -105,7 +113,81 @@ class HorizontalAxis extends Component {
     const y2 = pos === 'bottom' ? tickSize : this.props.height - tickSize;
     const ticks = this.props.ticks;
 
-    // const pointWidth = this.props.width / ticks.length;
+    return ticks.map((tick, idx) => {
+      const x = scale(tick);
+      const textY = 10 + tickSize;
+      return (
+        <g key={tick}>
+          <line x1={x} x2={x} y1={y1} y2={y2}
+            style={{stroke: '#333', strokeWidth: 2}} />
+          <text x={x} y={textY}
+            textAnchor="middle"
+            style={{stroke: '#333', fontSize: 12}}>
+              {this.props.tickFormat(tick)}
+          </text>
+        </g>
+      );
+    });
+  }
+
+  render() {
+    const tickLines = this.getTicks();
+    const line = {
+      x1: 0,
+      x2: this.props.width,
+      y1: 0,
+      y2: 0,
+    };
+
+    let label;
+    if (this.props.label) {
+      label = (
+        <text transform={`translate(${this.props.width / 2}, ${this.props.height - 4})`}
+          textAnchor="middle"
+          style={{stroke: '#333', fontSize: '12'}}>
+          {this.props.label}
+        </text>);
+    }
+
+    return (
+      <g>
+        {tickLines}
+        <line {...line}
+          style={{stroke: '#666', strokeWidth: 1}} />
+        {label}
+      </g>);
+  }
+}
+
+class HorizontalTimeAxis extends Component {
+  static propTypes = {
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    position: PropTypes.string.isRequired,
+    label: PropTypes.string,
+    scale: PropTypes.func.isRequired,
+    ticks: PropTypes.array,
+    tickSize: PropTypes.number,
+    tickFormat: PropTypes.func,
+  };
+
+  static defaultProps = {
+    width: 500,
+    height: 300,
+    tickSize: 3,
+    tickFormat: (x) => moment(x).format('MMM'),
+  };
+
+  getTicks() {
+    if (!this.props.ticks) {
+      return;
+    }
+    const tickSize = this.props.tickSize;
+    const pos = this.props.position;
+    const scale = this.props.scale;
+    const y1 = pos === 'bottom' ? 0 : this.props.height;
+    const y2 = pos === 'bottom' ? tickSize : this.props.height - tickSize;
+    const ticks = this.props.ticks;
 
     return ticks.map((tick, idx) => {
       const x = scale(tick);
@@ -156,12 +238,16 @@ class HorizontalAxis extends Component {
 export default class Axis extends Component {
   static propTypes = {
     position: PropTypes.string.isRequired,
+    type: PropTypes.string,
   };
 
   render() {
     const pos = this.props.position;
 
     if (pos === 'top' || pos === 'bottom') {
+      if (this.props.type === 'datetime') {
+        return (<HorizontalTimeAxis {...this.props} />);
+      }
       return (<HorizontalAxis {...this.props} />);
     } else {
       return (<VerticalAxis {...this.props} />);

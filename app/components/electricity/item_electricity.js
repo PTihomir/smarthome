@@ -16,14 +16,18 @@ export default class ElectricityItem extends Component {
   };
 
   render() {
+    const cellStyle = {
+      height: undefined,
+    };
+
     return (
-      <TableRow>
-        <TableRowColumn>{moment(this.props.timestamp).format('YYYY-MM-DD')}</TableRowColumn>
-        <TableRowColumn>{this.props.high_cost || 0}</TableRowColumn>
-        <TableRowColumn>{this.props.low_cost || 0}</TableRowColumn>
-        <TableRowColumn>
-          { this.props.onEdit ? (<IconButton onClick={this.props.onEdit}><FontIcon className="material-icons">create</FontIcon></IconButton>) : ''}
-          { this.props.onEdit ? (<IconButton onClick={this.props.onDelete}><FontIcon className="material-icons">delete</FontIcon></IconButton>) : ''}
+      <TableRow style={{height: undefined}}>
+        <TableRowColumn style={cellStyle}>{moment(this.props.timestamp).format('YYYY-MM-DD')}</TableRowColumn>
+        <TableRowColumn style={cellStyle}>{this.props.high_cost || 0}</TableRowColumn>
+        <TableRowColumn style={cellStyle}>{this.props.low_cost || 0}</TableRowColumn>
+        <TableRowColumn style={cellStyle}>
+          { this.props.onEdit ? (<IconButton iconStyle={{width: '16px', height: '16px'}} onClick={this.props.onEdit}><FontIcon style={{fontSize: 48}} className="material-icons">create</FontIcon></IconButton>) : ''}
+          { this.props.onEdit ? (<IconButton onClick={this.props.onDelete}><FontIcon style={{fontSize: 16}} className="material-icons">delete</FontIcon></IconButton>) : ''}
         </TableRowColumn>
       </TableRow>
     );

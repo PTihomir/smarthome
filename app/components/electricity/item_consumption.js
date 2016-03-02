@@ -16,13 +16,16 @@ export default class ElectricityConsumptionItem extends Component {
     const day = Math.round(this.props.day);
     const night = Math.round(this.props.night);
     const sum = Math.round(this.props.day + this.props.night);
+    const cellStyle = {
+      height: undefined,
+    };
 
     return (
-      <TableRow>
-        <TableRowColumn>{moment(this.props.timestamp).format('YYYY MMM')}</TableRowColumn>
-        <TableRowColumn>{day ? `${day} kWh` : '-'}</TableRowColumn>
-        <TableRowColumn>{night ? `${night} kWh` : '-'}</TableRowColumn>
-        <TableRowColumn>{sum ? `${sum} kWh` : '-'}</TableRowColumn>
+      <TableRow style={{height: undefined}}>
+        <TableRowColumn style={cellStyle}>{moment(this.props.timestamp).format('YYYY MMM')}</TableRowColumn>
+        <TableRowColumn style={cellStyle}>{day ? `${day} kWh` : '-'}</TableRowColumn>
+        <TableRowColumn style={cellStyle}>{night ? `${night} kWh` : '-'}</TableRowColumn>
+        <TableRowColumn style={cellStyle}>{sum ? `${sum} kWh` : '-'}</TableRowColumn>
       </TableRow>
     );
   }

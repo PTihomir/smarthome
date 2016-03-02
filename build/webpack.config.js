@@ -1,5 +1,5 @@
 // var path = require('path');
-//   webpack = require('webpack'),
+var webpack = require('webpack');
 //   ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var plugins = [
@@ -9,6 +9,9 @@ var plugins = [
   // new ExtractTextPlugin('styles.css', {
   //     allChunks: true,
   // }),
+  new webpack.ProvidePlugin({
+    'fetch': 'imports?this=>global!exports?global.fetch!isomorphic-fetch',
+  }),
 ];
 
 module.exports = {
