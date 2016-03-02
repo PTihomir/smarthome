@@ -1,14 +1,14 @@
 {
   "name": "smarthome-project",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Basic project for tracking various house related metrics.",
   "main": "bin/main.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "build": "webpack --config ./build/webpack.config.js",
-    "dev": "webpack-dev-server --progress --colors  --hot --inline --content-base ./app/ --config ./build/webpack.config.js --host 0.0.0.0 --port 4040",
+    "build": "webpack --config ./webpack/webpack.config.js",
+    "dev": "webpack-dev-server --progress --colors  --hot --inline --content-base ./app/ --config ./webpack/webpack.config.js --host 0.0.0.0 --port 4040",
     "test": "NODE_ENV=test mocha ./test/axis.js",
     "setup": "node ./bin/setup.js",
     "setup-demo": "node ./bin/setup.js --demo --reset",
@@ -16,18 +16,18 @@
     "start-debug": "node debug ./bin/main.js"
   },
   "dependencies": {
+    "moment": "^2.11.2",
+    "sqlite3": "^3.1.1"
+  },
+  "devDependencies": {
     "colors": "*",
-    "d3": "^3.5.15",
     "express": "*",
     "material-ui": "^0.14.4",
-    "moment": "*",
     "react": "^0.14.6",
     "react-d3": "^0.4.0",
     "react-dom": "^0.14.6",
     "react-look": "^1.0.0-beta4",
-    "react-tap-event-plugin": "^0.2.2"
-  },
-  "devDependencies": {
+    "react-tap-event-plugin": "^0.2.2",
     "babel-core": "^6.4.0",
     "babel-loader": "^6.2.1",
     "babel-plugin-add-module-exports": "^0.1.1",
@@ -40,6 +40,7 @@
     "babel-register": "^6.3.13",
     "babel-runtime": "^6.3.19",
     "css-loader": "^0.23.1",
+    "d3": "^3.5.15",
     "es6-promise": "^3.1.2",
     "exports-loader": "^0.6.3",
     "extract-text-webpack-plugin": "^1.0.1",
@@ -51,7 +52,6 @@
     "react-css-modules": "^3.6.8",
     "sass-loader": "^3.1.2",
     "should": "*",
-    "sqlite3": "^3.1.1",
     "style-loader": "^0.13.0",
     "webpack": "^1.12.10",
     "webpack-dev-server": "^1.14.0"

@@ -26,7 +26,7 @@ module.exports = {
     // ],
   },
   output: {
-    path: './app/bin/',
+    path: './app/build/',
     // publicPath: '/app/',
     filename: '[name].js',
   },
@@ -48,7 +48,7 @@ module.exports = {
   },
   resolve: {
     // you can now require('file') instead of require('file.coffee')
-    // extensions: ['', '.js', '.json', '.coffee']
+    extensions: ['', '.js', '.json'],
   },
   resolveLoader: {
     // root: [path.resolve('./build')]
