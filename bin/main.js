@@ -20,8 +20,7 @@ function handleRequest(req, res) {
   }
 
   if (paths.length === 0) {
-    console.error(`path not defined`);
-    res.statusCode = 404;
+    res.end('Server works! :)');
     res.end();
     return;
   }
