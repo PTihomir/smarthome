@@ -1,16 +1,17 @@
 const http = require('http');
 const url = require('url');
+const config = require('config');
 
 const electricity_handler = require('./electricity/electricity_handler');
 
-const PORT = 4080;
+const PORT = config.port;
 
 function handleRequest(req, res) {
   const parsed = url.parse(req.url);
   const paths = parsed.path.split('/').filter((value) => value !== '');
 
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4040');
-  // res.setHeader('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Origin', config.allow_origin);
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
