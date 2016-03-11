@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "webpack --config ./webpack/webpack.config.js",
-    "dev": "webpack-dev-server --progress --colors  --hot --inline --content-base ./app/ --config ./webpack/webpack.config.js --host 0.0.0.0 --port 4040",
+    "dev": "webpack-dev-server --progress --colors  --hot --inline --content-base ./app/dist --config ./webpack/webpack.config.js --host 0.0.0.0 --port 4040",
     "test": "NODE_ENV=test mocha ./test/axis.js",
     "setup": "node ./bin/setup.js",
     "setup-demo": "node ./bin/setup.js --demo --reset",

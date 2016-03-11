@@ -26,8 +26,8 @@ module.exports = {
     // ],
   },
   output: {
-    path: './app/build/',
-    // publicPath: '/app/',
+    path: '/app/dist/',
+    // publicPath: './dist/',
     filename: '[name].js',
   },
   module: {
