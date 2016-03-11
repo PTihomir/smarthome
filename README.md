@@ -3,6 +3,16 @@ smarthome
 
 
 
+=======
+Install SQLITE3 to raspberry pi
+===============================
+
+Remove existing slite3 from the projects node_modules and run
+
+```bash
+    npm install sqlite3 --build-from-source
+```
+
 How to create the service for server
 ====================================
 
