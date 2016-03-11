@@ -1,6 +1,6 @@
 const http = require('http');
 const url = require('url');
-const config = require('config');
+const config = require('./config');
 
 const electricity_handler = require('./electricity/electricity_handler');
 
