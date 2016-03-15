@@ -1,8 +1,8 @@
 'use strict';
+
+import variables from '../style/variables';
 import React, {Component, PropTypes} from 'react';
 import Tile from '../components/tile/tile.js';
-import TileW from '../components/tile/tile_2x1.js';
-import TileH from '../components/tile/tile_1x2.js';
 import TileElectricity from '../components/tile/tile_electricity.js';
 
 export default class TileLayout extends Component {
@@ -13,17 +13,16 @@ export default class TileLayout extends Component {
   };
 
   static defaultProps = {
-    gridSize: 250,
-    gridWidth: 3,
+    gridSize: variables.sizes.tileLayoutGridSize,
+    gridWidth: variables.sizes.tileLayoutTileWidth,
   };
 
   state = {
-    tiles: [{ order: 0, constructor: TileElectricity },
-            { order: 1, constructor: Tile },
-            { order: 2, constructor: TileH },
-            { order: 3, constructor: TileW },
-            { order: 4, constructor: Tile },
-          ],
+    tiles: [
+      // { order: 0, constructor: TileElectricity },
+      { order: 1, constructor: Tile },
+      { order: 4, constructor: Tile },
+    ],
     fixedPosition: null,
   };
 

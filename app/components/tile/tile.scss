@@ -1,0 +1,40 @@
+.tile {
+    position: relative;
+}
+
+.tile__control {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    line-height: 33px;
+
+    position: absolute;
+
+}
+
+.tile__control > span {
+    flex: 0 0 auto;
+}
+
+.tile--collapsed {
+    .tile__control {
+        justify-content: space-around;
+        bottom: -46px;
+        left: 20px;
+        right: 20px;
+        background-color: #EEE;
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+        box-shadow: 1px 1px 1px #BBB;
+    }
+}
+
+.tile--expanded {
+    .tile__control {
+        justify-content: space-between;
+        top: 0;
+        left: 0px;
+        right: 0px;
+    }
+}
+

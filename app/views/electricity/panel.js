@@ -1,11 +1,17 @@
 'use strict';
+import classes from './electricity.scss';
 import config from '../../config';
 import React, {Component} from 'react';
 import fetch from 'isomorphic-fetch';
 import BarChart from '../../components/graph/BarChart';
 import moment from 'moment';
 
-import ElectricityList from './list';
+import ConsumptionTable from '../../components/electricity/consumption_table';
+import ElectricityTable from '../../components/electricity/electricity_table';
+
+import RaisedButton from 'material-ui/lib/raised-button';
+import SelectField from 'material-ui/lib/select-field';
+import MenuItem from 'material-ui/lib/menus/menu-item';
 
 export default class ElectricityPanel extends Component {
   static propTypes = {
@@ -14,7 +20,28 @@ export default class ElectricityPanel extends Component {
   state = {
     list_raw: [],
     list_cons: [],
+    list_type: 2, // 1 - raw || 2 - consumption
+    edit: false,
+    new: false,
   };
+
+  constructor() {
+    super();
+    this.toggleListType = this.toggleListType.bind(this);
+    this.handleSaveEdit = this.handleSaveEdit.bind(this);
+    this.handleDeleteItem = this.handleDeleteItem.bind(this);
+    this.handleEditItem = this.handleEditItem.bind(this);
+    this.handleNewItem = this.handleNewItem.bind(this);
+    this.handleCancelEdit = this.handleCancelEdit.bind(this);
+  }
+
+  toggleListType(e, index, value) {
+    this.setState({
+      list_type: value,
+      edit: value === 2 ? false : this.state.edit,
+      new: value === 2 ? false : this.state.new,
+    });
+  }
 
   componentDidMount() {
     this.fetchListData();
@@ -41,7 +68,9 @@ export default class ElectricityPanel extends Component {
       });
   }
 
-  saveEdit(data) {
+  handleSaveEdit(data) {
+    this.handleCancelEdit();
+
     fetch(config.base_url + '/electricity/save', {
       method: 'post',
       headers: {
@@ -68,7 +97,7 @@ export default class ElectricityPanel extends Component {
     });
   }
 
-  deleteItem(data) {
+  handleDeleteItem(data) {
     fetch(config.base_url + '/electricity/delete', {
       method: 'post',
       headers: {
@@ -95,8 +124,28 @@ export default class ElectricityPanel extends Component {
     });
   }
 
+  handleEditItem(id) {
+    this.setState({
+      edit: id,
+    });
+  }
+
+  handleNewItem() {
+    this.setState({
+      list_type: 1,
+      new: true,
+    });
+  }
+
+  handleCancelEdit() {
+    this.setState({
+      edit: false,
+      new: false,
+    });
+  }
+
   render() {
-    const list_raw = this.state.list_raw;
+    const list_raw = this.state.list_raw.reverse();
 
     const object_cons = this.state.list_cons.reduce((prevValue, item) => {
       const timestamp = moment(item.timestamp).startOf('month').valueOf();
@@ -139,6 +188,22 @@ export default class ElectricityPanel extends Component {
       }),
     }];
 
+    let table;
+
+    if (this.state.list_type === 1) {
+      table = (<ElectricityTable
+        list={list_raw}
+        showNewForm={this.state.new}
+        editItem={this.state.edit}
+        onSave={this.handleSaveEdit}
+        onDelete={this.handleDeleteItem}
+        onEditItem={this.handleEditItem}
+        onCancel={this.handleCancelEdit}
+        />);
+    } else {
+      table = (<ConsumptionTable list={list_cons} />);
+    }
+
     return (
       <div>
         <div className="graph">
@@ -148,7 +213,16 @@ export default class ElectricityPanel extends Component {
             data={graph_data}
           />
         </div>
-        <ElectricityList list_raw={list_raw} list_cons={list_cons} onSave={this.saveEdit.bind(this)} onDelete={this.deleteItem.bind(this)} />
+        <div className={classes.list__control}>
+          <SelectField value={this.state.list_type} onChange={this.toggleListType} className={classes.list__control__select}>
+            <MenuItem value={1} primaryText="Electricity" />
+            <MenuItem value={2} primaryText="Consumption" />
+          </SelectField>
+          <RaisedButton label="New" secondary onClick={this.handleNewItem} className={classes.list__control__button}/>
+        </div>
+        <div>
+          {table}
+        </div>
       </div>
     );
   }

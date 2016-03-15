@@ -2,7 +2,6 @@
 import React, {Component, PropTypes} from 'react';
 import ElectricityItem from './item_electricity';
 import ElectricityItemEdit from './edit_electricity';
-import RaisedButton from 'material-ui/lib/raised-button';
 
 import Table from 'material-ui/lib/table/table';
 import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
@@ -15,42 +14,36 @@ export default class ElectricityTable extends Component {
 
   static propTypes = {
     list: PropTypes.array,
+    showNewForm: PropTypes.bool,
+    editItem: PropTypes.any,
     onSave: PropTypes.func,
     onDelete: PropTypes.func,
+    onEditItem: PropTypes.func,
+    onCancel: PropTypes.func,
   };
 
   static defaultProps = {
     list: [],
   };
 
-  state = {
-    edit: false,
-  };
-
-  onEdit(id) {
-    console.log('ping', id);
-    this.setState({
-      edit: id,
-    });
+  constructor() {
+    super();
+    this.onEdit = this.onEdit.bind(this);
+    this.saveEdit = this.saveEdit.bind(this);
+    this.cancelEdit = this.cancelEdit.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
   }
 
-  onNew() {
-    this.setState({
-      edit: true,
-    });
+  onEdit(id) {
+    this.props.onEditItem(id);
   }
 
   saveEdit(data) {
     this.props.onSave(data);
-    this.setState({
-      edit: false,
-    });
   }
 
   cancelEdit() {
-    this.setState({
-      edit: false,
-    });
+    this.props.onCancel();
   }
 
   deleteItem(timestamp) {
@@ -63,14 +56,19 @@ export default class ElectricityTable extends Component {
     const list = this.props.list;
 
     let body;
-    let footer;
+    let newForm;
 
     if (list.length > 0) {
       body = list.map((elec, idx) => {
-        if (elec.timestamp === this.state.edit) {
-          return (<ElectricityItemEdit key={elec.timestamp} {...elec} freezeDatetime onSave={this.saveEdit.bind(this)} onCancel={this.cancelEdit.bind(this)} />);
+        if (elec.timestamp === this.props.editItem) {
+          return (<ElectricityItemEdit key={elec.timestamp} {...elec}
+            freezeDatetime
+            onSave={this.saveEdit}
+            onCancel={this.cancelEdit} />);
         } else {
-          return (<ElectricityItem key={elec.timestamp} {...elec} onEdit={() => { this.onEdit(elec.timestamp); }} onDelete={() => { this.deleteItem(elec.timestamp); }}/>);
+          return (<ElectricityItem key={elec.timestamp} {...elec}
+            onEdit={() => { this.onEdit(elec.timestamp); }}
+            onDelete={() => { this.deleteItem(elec.timestamp); }}/>);
         }
       });
     } else {
@@ -81,17 +79,9 @@ export default class ElectricityTable extends Component {
       );
     }
 
-    if (this.state.edit === false) {
-      footer = (
-        <TableRow>
-            <TableRowColumn>
-              <RaisedButton label="New" secondary onClick={this.onNew.bind(this)} />
-            </TableRowColumn>
-          </TableRow>
-      );
-    } else if (this.state.edit === true) {
-      footer = (
-        <ElectricityItemEdit onSave={this.saveEdit.bind(this)} onCancel={this.cancelEdit.bind(this)}/>
+    if (this.props.showNewForm) {
+      newForm = (
+        <ElectricityItemEdit onSave={this.saveEdit} onCancel={this.cancelEdit}/>
       );
     }
 
@@ -106,9 +96,9 @@ export default class ElectricityTable extends Component {
           </TableRow>
         </TableHeader>
         <TableBody displayRowCheckbox={false}>
-          {body}
           {/* Add row for the New button */}
-          {footer}
+          {newForm}
+          {body}
         </TableBody>
       </Table>
     );
