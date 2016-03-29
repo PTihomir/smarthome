@@ -19,15 +19,30 @@ export default class TileLayout extends Component {
 
   state = {
     tiles: [
-      // { order: 0, constructor: TileElectricity },
-      { order: 1, constructor: Tile },
-      { order: 4, constructor: Tile },
+      { id: 2, order: 0, constructor: TileElectricity, expanded: false },
+      { id: 0, order: 1, constructor: Tile, expanded: false },
+      { id: 1, order: 4, constructor: Tile, expanded: false },
     ],
     fixedPosition: null,
   };
 
   constructor(props) {
     super(props);
+
+    this.handleToggleExpand = this.handleToggleExpand.bind(this);
+  }
+
+  handleToggleExpand(id, expandState) {
+    console.log(id, expandState);
+    let tiles = this.state.tiles.slice();
+    tiles.forEach((tile) => {
+      if (tile.id === id) {
+        tile.expanded = expandState;
+      }
+    });
+    this.setState({
+      tiles: tiles,
+    });
   }
 
   renderTiles() {
@@ -62,8 +77,14 @@ export default class TileLayout extends Component {
       reserved.push(this.state.fixedPosition);
     }
 
+    // Define tiles.
     let tiles = this.state.tiles.map((tile, index) => {
-      const {width, height} = tile.constructor.getDimension();
+      let {width, height, expWidth, expHeight} = tile.constructor.getDimension();
+
+      if (tile.expanded) {
+        width = expWidth;
+        height = expHeight;
+      }
 
       // Check if position is available
       // Check if tile is outside area
@@ -77,6 +98,7 @@ export default class TileLayout extends Component {
         height: gridSize * height + 'px',
         left: x * gridSize + 'px',
         top: y * gridSize + 'px',
+        transition: 'left 0.5s, top 0.5s, width 0.2s, height 0.2s',
       };
 
       // Mark position in reserved array
@@ -86,8 +108,11 @@ export default class TileLayout extends Component {
         }
       }
 
-      return (<div style={styles} key={index}>{
-        React.createElement(tile.constructor, {}, `Tile: ${tile.order}`)}</div>);
+      return (<div style={styles} key={tile.id}>{
+        React.createElement(tile.constructor, {
+          expanded: tile.expanded,
+          onToggleExpand: (expandState) => { this.handleToggleExpand(tile.id, expandState); },
+        }, `Tile: ${tile.order}`)}</div>);
     });
 
     return tiles;

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import ElectricityPanel from '../../views/electricity/panel';
+import React, {Component, PropTypes} from 'react';
+import ElectricityContainer from '../../views/electricity/container';
 
 import Tile from './tile.js';
 
@@ -7,13 +7,19 @@ export const dimension = {
   width: 1,
   height: 1,
   expWidth: 3,
-  expHeight: 2,
+  expHeight: 3,
 };
 
 export default class TileElectricity extends Component {
+  static propTypes = {
+    color: PropTypes.string,
+    expanded: PropTypes.bool,
+    onToggleExpand: PropTypes.func,
+  };
 
   static defaultProps = {
     color: '#FAFAFF',
+    expanded: false,
   };
 
   static getDimension() {
@@ -22,14 +28,6 @@ export default class TileElectricity extends Component {
 
   constructor() {
     super();
-
-    this.handleExpand = this.handleExpand.bind(this);
-  }
-
-  handleExpand(expanded) {
-    this.setState({
-      expanded: expanded,
-    });
   }
 
   render() {
@@ -37,9 +35,10 @@ export default class TileElectricity extends Component {
       dimension={dimension}
       title="Electricity"
       expandable
-      onToggleExpand={this.handleExpand}
+      expanded={this.props.expanded}
+      onToggleExpand={this.props.onToggleExpand}
       >
-        <ElectricityPanel expanded={this.state.expanded} />
+        <ElectricityContainer expanded={this.props.expanded} />
       </Tile>);
   }
 

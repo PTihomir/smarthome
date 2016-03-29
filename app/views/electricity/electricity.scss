@@ -11,3 +11,24 @@
     flex: 0 0 auto;
 }
 
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.panel__title {
+    flex: 0 0 auto;
+    font-weight: bold;
+    border-bottom: 1px solid #AAA;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+.panel__value {
+    flex: 0 0 auto;
+
+}
