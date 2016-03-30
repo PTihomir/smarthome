@@ -123,7 +123,7 @@ export default class ElectricityPanelExtended extends Component {
 
     return (
       <div>
-        <div className="graph">
+        <div className="graph" style={{overflow: 'hidden'}}>
           <BarChart
             width={680}
             height={180}

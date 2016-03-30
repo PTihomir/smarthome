@@ -3,7 +3,7 @@
 import variables from '../style/variables';
 import React, {Component, PropTypes} from 'react';
 import Tile from '../components/tile/tile.js';
-import TileElectricity from '../components/tile/tile_electricity.js';
+import TileElectricity from '../views/electricity/container.js';
 
 export default class TileLayout extends Component {
 
@@ -33,11 +33,12 @@ export default class TileLayout extends Component {
   }
 
   handleToggleExpand(id, expandState) {
-    console.log(id, expandState);
     let tiles = this.state.tiles.slice();
     tiles.forEach((tile) => {
       if (tile.id === id) {
         tile.expanded = expandState;
+      } else if (expandState) {
+        tile.expanded = false;
       }
     });
     this.setState({
@@ -111,6 +112,8 @@ export default class TileLayout extends Component {
       return (<div style={styles} key={tile.id}>{
         React.createElement(tile.constructor, {
           expanded: tile.expanded,
+          frontSide: (<div>Front side</div>),
+          backSide: (<div>Back side</div>),
           onToggleExpand: (expandState) => { this.handleToggleExpand(tile.id, expandState); },
         }, `Tile: ${tile.order}`)}</div>);
     });

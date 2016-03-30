@@ -18,6 +18,8 @@ export default class Tile extends Component {
 
   static propTypes = {
     children: PropTypes.any,
+    frontSide: PropTypes.any,
+    backSide: PropTypes.any,
     color: PropTypes.string,
     dimension: PropTypes.shape({
       width: PropTypes.number,
@@ -72,27 +74,28 @@ export default class Tile extends Component {
   }
 
   render() {
-    if (this.props.expanded) {
-      return this.renderExpanded();
-    } else {
-      return this.renderCollapsed();
-    }
-  }
+    const {width, height, expWidth, expHeight} = this.props.dimension;
+    let tileWidth, tileHeight;
 
-  renderCollapsed() {
-    const {width, height} = this.props.dimension;
+    if (!this.props.expanded) {
+      tileWidth = (variables.sizes.tileLayoutGridSize * width - 50) + 'px';
+      tileHeight = (variables.sizes.tileLayoutGridSize * height - 50) + 'px';
+    } else {
+      tileWidth = (variables.sizes.tileLayoutGridSize * expWidth - 50) + 'px';
+      tileHeight = (variables.sizes.tileLayoutGridSize * expHeight - 50) + 'px';
+    }
 
     let styles = {
       margin: '25px',
-      width: (variables.sizes.tileLayoutGridSize * width - 50) + 'px',
-      height: (variables.sizes.tileLayoutGridSize * height - 50) + 'px',
+      width: tileWidth,
+      height: tileHeight,
       backgroundColor: this.props.color,
     };
-    let control;
 
+    let frontControl, backControl;
     if (this.props.expandable) {
-      control = (
-        <div className={classes['tile__control']} style={{display: this.state.hovered ? 'flex' : 'none'}}>
+      frontControl = (
+        <div className={cx('tile__control', 'tile__control--front')} style={{display: this.state.hovered ? 'flex' : 'none'}}>
           <span>{this.props.title}</span>
           <span>
             <IconButton
@@ -102,38 +105,9 @@ export default class Tile extends Component {
             </IconButton>
           </span>
         </div>);
-    }
 
-    let className = cx({
-      'tile': true,
-      'tile--collapsed': true,
-    });
-
-    return (
-        <div style={styles}
-          className={className}
-          onMouseEnter={this.handleHover} onMouseLeave={this.handleHover}>
-          <div className={cx('tile__content')}>
-            {this.props.children}
-          </div>
-          {control}
-        </div>);
-  }
-
-  renderExpanded() {
-    const {expWidth: width, expHeight: height} = this.props.dimension;
-
-    let styles = {
-      margin: '25px',
-      width: (variables.sizes.tileLayoutGridSize * width - 50) + 'px',
-      height: (variables.sizes.tileLayoutGridSize * height - 50) + 'px',
-      backgroundColor: this.props.color,
-    };
-    let control;
-
-    if (this.props.expandable) {
-      control = (
-        <div className={classes['tile__control']}>
+      backControl = (
+        <div className={cx('tile__control', 'tile__control--back')}>
           <span>{this.props.title}</span>
           <span>
             <IconButton
@@ -147,17 +121,35 @@ export default class Tile extends Component {
 
     let className = cx({
       'tile': true,
-      'tile--expanded': true,
+      'tile--expanded': this.props.expanded,
+      'tile--collapsed': !this.props.expanded,
     });
+
+    let frontSide, backSide;
+    if (this.props.frontSide || this.props.children) {
+      frontSide = (
+        <div className={cx('tile__content', 'tile__content--front')}>
+          {this.props.frontSide ? this.props.frontSide : this.props.children}
+          {frontControl}
+        </div>
+      );
+    }
+
+    if (this.props.backSide) {
+      backSide = (
+        <div className={cx('tile__content', 'tile__content--back')}>
+          {this.props.backSide}
+          {backControl}
+        </div>
+      );
+    }
 
     return (
         <div style={styles}
           className={className}
           onMouseEnter={this.handleHover} onMouseLeave={this.handleHover}>
-          <div className={cx('tile__content')}>
-            {this.props.children}
-          </div>
-          {control}
+            {frontSide}
+            {backSide}
         </div>);
   }
 }
