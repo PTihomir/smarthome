@@ -10,9 +10,11 @@ function handleRequest(req, res) {
   const parsed = url.parse(req.url);
   const paths = parsed.path.split('/').filter((value) => value !== '');
 
-  res.setHeader('Access-Control-Allow-Origin', config.allow_origin);
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (config.allow_origin.some(url => url === req.headers.origin)) {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
 
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
