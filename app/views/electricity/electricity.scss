@@ -1,0 +1,36 @@
+.list__control {
+    display: flex;
+    justify-content: space-between;
+}
+
+.list__control__select {
+    flex: 0 0 auto;
+}
+
+.list__control__button {
+    flex: 0 0 auto;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.panel__title {
+    flex: 0 0 auto;
+    font-weight: bold;
+    border-bottom: 1px solid #AAA;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+.panel__value {
+    flex: 0 0 auto;
+    padding: 2px 10px;
+    margin: 2px 0;
+    box-shadow: 1px 1px 1px 0 rgba(50, 50, 50, 0.5);
+}
