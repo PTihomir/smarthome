@@ -3,8 +3,8 @@ import { StyleSheet } from 'react-look';
 
 export default class Tooltip extends Component {
   static propTypes = {
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    width: PropTypes.number,
+    height: PropTypes.number,
     children: PropTypes.node,
     show: PropTypes.bool,
     showSpeed: PropTypes.number,
@@ -27,6 +27,10 @@ export default class Tooltip extends Component {
 
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
   }
 
   componentWillReceiveProps(newProps) {
@@ -71,10 +75,12 @@ export default class Tooltip extends Component {
   }
 
   render() {
+    const isVisible = (this.state.visible || this.state.hovered);
+
     const inStyle = {
-      top: this.props.width / 2,
-      left: this.props.height / 2,
-      display: this.state.visible || this.state.hovered ? 'block' : 'none',
+      top: isVisible ? this.props.width / 2 : 0,
+      left: isVisible ? this.props.height / 2 : 0,
+      display: isVisible ? 'block' : 'none',
     };
 
     return (

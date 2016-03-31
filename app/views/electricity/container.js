@@ -15,11 +15,12 @@ export const dimension = {
   width: 1,
   height: 1,
   expWidth: 3,
-  expHeight: 3,
+  expHeight: 2,
 };
 
 export default class TileElectricity extends Component {
   static propTypes = {
+    gridSize: PropTypes.number,
     color: PropTypes.string,
     expanded: PropTypes.bool,
     onToggleExpand: PropTypes.func,
@@ -169,6 +170,7 @@ export default class TileElectricity extends Component {
         monthly_consumption={this.state.monthly_consumption}
         onSaveEdit={this.handleSaveEdit}
         onDelete={this.handleDeleteItem}
+        visible={this.props.expanded}
         />
       );
 
@@ -179,10 +181,13 @@ export default class TileElectricity extends Component {
     }
 
     let smallContent = (
-      <CompactPanel data={lastMonthData} />
+      <CompactPanel data={lastMonthData}
+        visible={!this.props.expanded}
+        />
       );
 
     return (<Tile
+        gridSize={this.props.gridSize}
         dimension={dimension}
         title="Electricity"
         expandable

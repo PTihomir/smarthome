@@ -15,8 +15,6 @@ const defaultChartColors = ['#009688', '#2196F3', '#E91E63', '#F44336'];
 
 export default class BarChart extends Component {
   static propTypes = {
-    width: PropTypes.number,
-    height: PropTypes.number,
     data: PropTypes.array,
     lineData: PropTypes.array,
     stacked: PropTypes.bool,
@@ -51,20 +49,63 @@ export default class BarChart extends Component {
   };
 
   state = {
+    width: null,
+    height: null,
     scaleX: d3.scale
-        .linear()
-        .range([0, this.props.width - this.props.margin.left - this.props.margin.right]),
+        .linear(),
     scaleY: d3.scale
-        .linear()
-        .range([0, this.props.height - this.props.margin.bottom - this.props.margin.top]),
+        .linear(),
   };
 
-  componentWillMount() {
-    this.processSeries(this.props.data, this.props.lineData);
+  constructor(props) {
+    super(props);
+    this.updateWidth = this.updateWidth.bind(this);
+  }
+
+  // componentWillMount() {
+  //   this.processSeries(this.props.data, this.props.lineData);
+  // }
+
+  componentDidMount() {
+    this.cachedWidth = -1;
+    this.cachedHeight = -1;
+
+    // Set the interval for checking width and height
+    this.interval = setInterval(() => {
+      // console.log('ping interval');
+      const newWidth = this.refs.graphCont.offsetWidth;
+      const newHeight = this.refs.graphCont.offsetHeight;
+      if (this.cachedWidth !== newWidth || this.cachedHeight !== newHeight) {
+        this.cachedWidth = newWidth;
+        this.cachedHeight = newHeight;
+        this.updateWidth(newWidth, newHeight);
+      }
+    }, 100);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   componentWillReceiveProps(nextProps) {
     this.processSeries(nextProps.data, nextProps.lineData);
+  }
+
+  updateWidth(newWidth, newHeight) {
+    const scaleX = this.state.scaleX.copy();
+    const scaleY = this.state.scaleY.copy();
+
+    scaleX.range([0, newWidth - this.props.margin.left - this.props.margin.right]);
+    scaleY.range([0, newHeight - this.props.margin.bottom - this.props.margin.top]);
+
+    this.setState({
+      width: newWidth,
+      height: newHeight,
+      scaleX: scaleX,
+      scaleY: scaleY,
+    });
+
+    this.processSeries(this.props.data, this.props.lineData);
   }
 
   processSeries(barSeries, lineSeries) {
@@ -229,15 +270,14 @@ export default class BarChart extends Component {
     });
   }
 
-  render() {
-    const margin = this.props.margin;
-    const innerHeight = this.props.height - margin.top - margin.bottom;
-    const innerWidth = this.props.width - margin.left - margin.right;
-    // console.log('Render', this.state.values);
+  renderSVG() {
+    if (this.state.width !== null && this.state.height !== null) {
+      const margin = this.props.margin;
+      const innerWidth = this.state.width - margin.left - margin.right;
+      const innerHeight = this.state.height - margin.top - margin.bottom;
 
-    return (
-      <div className={style.chart}>
-        <svg height={this.props.height} width={this.props.width}>
+      return (
+        <svg height={this.state.height} width={this.state.width}>
           {/* Center area */}
           <g transform={`translate(${margin.left}, ${margin.top})`}>
             <Plot height={innerHeight}
@@ -265,7 +305,7 @@ export default class BarChart extends Component {
               />
           </g>
           {/* Bottom */}
-          <g transform={`translate(${margin.left}, ${this.props.height - margin.bottom})`}>
+          <g transform={`translate(${margin.left}, ${this.state.height - margin.bottom})`}>
             <Axis
               height={margin.bottom}
               width={innerWidth}
@@ -277,16 +317,26 @@ export default class BarChart extends Component {
               />
           </g>
           {/* Right */}
-          <g transform={`translate(${this.props.width - margin.right}, ${margin.top})`}>
+          <g transform={`translate(${this.state.width - margin.right}, ${margin.top})`}>
           </g>
           {/* Top */}
           <g transform={`translate(${margin.left}, 0)`}>
           </g>
         </svg>
+        );
+    }
+  }
+
+  render() {
+    const svg = this.renderSVG();
+
+    return (
+      <div ref="graphCont" className={style.chart}>
+        {svg}
         {/* Tooltip*/}
         <Tooltip
-          height={this.props.width}
-          width={this.props.height}
+          height={this.state.width}
+          width={this.state.height}
           show={this.state.tooltipVisible}>
           {this.state.tooltip}
         </Tooltip>
@@ -297,6 +347,8 @@ export default class BarChart extends Component {
 const style = StyleSheet.create({
   chart: {
     display: 'relative',
+    width: '100%',
+    height: '100%',
   },
 
   tooltip__row__name: {

@@ -40,9 +40,9 @@ module.exports = {
           presets: ['es2015', 'react', 'stage-0'],
         },
       },
-      { test: /\.scss$/, loader: 'style-loader!css-loader?modules!sass-loader' }, // use ! to chain loaders
+      { test: /\.scss$/, loader: 'style-loader!css-loader?modules&sourceMap!sass-loader' }, // use ! to chain loaders
       // { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!sass-loader')}, // use ! to chain loaders
-      { test: /\.css$/, loader: 'style-loader!css-loader?modules' },
+      { test: /\.css$/, loader: 'style-loader!css-loader?modules&sourceMap' },
       // { test: /\.svg(\?.*)?$/, loader: 'file-loader?name=[name].[ext]' },
     ],
   },

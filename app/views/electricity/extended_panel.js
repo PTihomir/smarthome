@@ -3,6 +3,8 @@ import classes from './electricity.scss';
 import React, {Component, PropTypes} from 'react';
 import BarChart from '../../components/graph/BarChart';
 
+import variables from '../../style/variables';
+
 import ConsumptionTable from '../../components/electricity/consumption_table';
 import ElectricityTable from '../../components/electricity/electricity_table';
 
@@ -12,17 +14,17 @@ import MenuItem from 'material-ui/lib/menus/menu-item';
 
 export default class ElectricityPanelExtended extends Component {
   static propTypes = {
-    expanded: PropTypes.bool,
     raw_list: PropTypes.array,
     monthly_consumption: PropTypes.array,
     onSaveEdit: PropTypes.func,
     onDelete: PropTypes.func,
+    visible: PropTypes.bool,
   };
 
   static defaultProps = {
-    expanded: false,
     raw_list: [],
     monthly_consumption: [],
+    visible: true,
   }
 
   state = {
@@ -31,8 +33,8 @@ export default class ElectricityPanelExtended extends Component {
     new: false,
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.toggleListType = this.toggleListType.bind(this);
     this.handleSaveEdit = this.handleSaveEdit.bind(this);
     this.handleDeleteItem = this.handleDeleteItem.bind(this);
@@ -88,19 +90,21 @@ export default class ElectricityPanelExtended extends Component {
     const list_consumption = this.props.monthly_consumption;
 
     const graph_data = [{
-      name: 'Day cons',
-      values: list_consumption.map((item, idx) => {
-        return {
-          x: item.timestamp,
-          y: item.day,
-        };
-      }),
-    }, {
       name: 'Night cons',
+      color: variables.colors.nightEnergy,
       values: list_consumption.map((item, idx) => {
         return {
           x: item.timestamp,
           y: item.night,
+        };
+      }),
+    }, {
+      name: 'Day cons',
+      color: variables.colors.dayEnergy,
+      values: list_consumption.map((item, idx) => {
+        return {
+          x: item.timestamp,
+          y: item.day,
         };
       }),
     }];
@@ -123,12 +127,11 @@ export default class ElectricityPanelExtended extends Component {
 
     return (
       <div>
-        <div className="graph" style={{overflow: 'hidden'}}>
-          <BarChart
-            width={680}
-            height={180}
-            data={graph_data}
-          />
+        <div className="graph" style={{overflow: 'hidden', height: '180px'}}>
+          {this.props.visible ? (
+            <BarChart
+              data={graph_data}
+            />) : null}
         </div>
         <div className={classes.list__control}>
           <SelectField value={this.state.list_type} onChange={this.toggleListType} className={classes.list__control__select}>

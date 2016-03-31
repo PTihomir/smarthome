@@ -32,6 +32,33 @@ export default class TileLayout extends Component {
     this.handleToggleExpand = this.handleToggleExpand.bind(this);
   }
 
+  componentWillMount() {
+    this.updateGridWidth();
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateGridWidth.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  updateGridWidth() {
+    let gridSize = this.props.gridSize;
+    let gridWidth = this.props.gridWidth;
+
+    if (matchMedia('only screen and (max-width: 750px)').matches) {
+      gridSize = 160;
+      gridWidth = 2;
+    }
+
+    this.setState({
+      gridSize,
+      gridWidth,
+    });
+  }
+
   handleToggleExpand(id, expandState) {
     let tiles = this.state.tiles.slice();
     tiles.forEach((tile) => {
@@ -47,8 +74,8 @@ export default class TileLayout extends Component {
   }
 
   renderTiles() {
-    const gridSize = this.props.gridSize;
-    const gridWidth = this.props.gridWidth;
+    const gridSize = this.state.gridSize;
+    const gridWidth = this.state.gridWidth;
 
     let reserved = [];
 
@@ -87,6 +114,8 @@ export default class TileLayout extends Component {
         height = expHeight;
       }
 
+      width = Math.min(width, gridWidth);
+
       // Check if position is available
       // Check if tile is outside area
 
@@ -99,6 +128,8 @@ export default class TileLayout extends Component {
         height: gridSize * height + 'px',
         left: x * gridSize + 'px',
         top: y * gridSize + 'px',
+        padding: '12px',
+        boxSizing: 'border-box',
         transition: 'left 0.5s, top 0.5s, width 0.2s, height 0.2s',
       };
 
@@ -111,6 +142,7 @@ export default class TileLayout extends Component {
 
       return (<div style={styles} key={tile.id}>{
         React.createElement(tile.constructor, {
+          gridSize: gridSize,
           expanded: tile.expanded,
           frontSide: (<div>Front side</div>),
           backSide: (<div>Back side</div>),
@@ -130,11 +162,12 @@ export default class TileLayout extends Component {
   render() {
     let tiles = this.renderTiles();
     let styles = {
-      width: this.props.gridSize * this.props.gridWidth + 'px',
-      height: this.props.gridSize * 4 + 'px',
-      border: '1px solid grey',
-      margin: '10px',
+      width: this.state.gridSize * this.state.gridWidth + 'px',
+      height: this.state.gridSize * 4 + 'px',
       position: 'relative',
+      marginRight: 'auto',
+      marginLeft: 'auto',
+      backgroundColor: variables.colors.tileLayoutBackground,
     };
 
     return (

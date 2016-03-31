@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import React, {Component, PropTypes} from 'react';
 
 import classes from './electricity.scss';
+import variables from '../../style/variables';
 
 // import Tile from './tile.js';
 
@@ -40,8 +41,16 @@ export default class ElectricityPanelCompact extends Component {
     return (
       <div className={cx('panel')}>
         <h3 className={cx('panel__title')}>{moment(data.timestamp).format('YYYY MMM')}</h3>
-        <div className={cx('panel__value')}>{day ? `${day} kWh` : '-'}</div>
-        <div className={cx('panel__value')}>{night ? `${night} kWh` : '-'}</div>
+        <div
+          className={cx('panel__value')}
+          style={{backgroundColor: variables.colors.dayEnergy}}>
+            {day ? `${day} kWh` : '-'}
+        </div>
+        <div
+          className={cx('panel__value')}
+          style={{backgroundColor: variables.colors.nightEnergy}}>
+            {night ? `${night} kWh` : '-'}
+        </div>
       </div>
     );
   }
