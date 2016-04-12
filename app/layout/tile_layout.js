@@ -2,8 +2,13 @@
 
 import variables from '../style/variables';
 import React, {Component, PropTypes} from 'react';
-import Tile from '../components/tile/tile.js';
-import TileElectricity from '../views/electricity/container.js';
+// import Tile from '../components/tile/tile.js';
+import ElectricityTile from '../views/electricity/container.js';
+import ArtTile from '../views/art/container.js';
+import FlowerTile from '../views/flower/container.js';
+import FuelTile from '../views/fuel/container.js';
+import RecipeTile from '../views/recipe/container.js';
+import TemperatureTile from '../views/temperature/container.js';
 
 export default class TileLayout extends Component {
 
@@ -19,9 +24,12 @@ export default class TileLayout extends Component {
 
   state = {
     tiles: [
-      { id: 2, order: 0, constructor: TileElectricity, expanded: false },
-      { id: 0, order: 1, constructor: Tile, expanded: false },
-      { id: 1, order: 4, constructor: Tile, expanded: false },
+      { id: 0, order: 0, constructor: ElectricityTile, expanded: false },
+      { id: 1, order: 6, constructor: ArtTile },
+      { id: 2, order: 2, constructor: FlowerTile },
+      { id: 3, order: 3, constructor: FuelTile },
+      { id: 4, order: 4, constructor: RecipeTile },
+      { id: 5, order: 1, constructor: TemperatureTile },
     ],
     fixedPosition: null,
   };
@@ -49,8 +57,13 @@ export default class TileLayout extends Component {
     let gridWidth = this.props.gridWidth;
 
     if (matchMedia('only screen and (max-width: 750px)').matches) {
-      gridSize = 160;
+      gridSize = 240;
       gridWidth = 2;
+    }
+
+    if (matchMedia('only screen and (max-width: 480px)').matches) {
+      gridSize = 320;
+      gridWidth = 1;
     }
 
     this.setState({
@@ -122,13 +135,15 @@ export default class TileLayout extends Component {
       // Check if positions are available
       const {x, y} = findPosition(0, {width, height});
 
+      const padding = 12;
+
       let styles = {
         position: 'absolute',
         width: gridSize * width + 'px',
         height: gridSize * height + 'px',
         left: x * gridSize + 'px',
         top: y * gridSize + 'px',
-        padding: '12px',
+        padding: padding + 'px',
         boxSizing: 'border-box',
         transition: 'left 0.5s, top 0.5s, width 0.2s, height 0.2s',
       };
@@ -142,7 +157,8 @@ export default class TileLayout extends Component {
 
       return (<div style={styles} key={tile.id}>{
         React.createElement(tile.constructor, {
-          gridSize: gridSize,
+          width: gridSize * width - padding * 2,
+          height: gridSize * height - padding * 2,
           expanded: tile.expanded,
           frontSide: (<div>Front side</div>),
           backSide: (<div>Back side</div>),

@@ -14,6 +14,7 @@ export default class Art extends Component {
     radius1: PropTypes.number,
     radius2: PropTypes.number,
     onFinished: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
   static defaultProps = {
@@ -34,11 +35,11 @@ export default class Art extends Component {
     path: [],
   };
 
-  componentDidMount () {
+  componentDidMount() {
     this.resetAnimation();
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.size !== this.props.size ||
         prevProps.fill !== this.props.fill ||
         prevProps.animationSpeed !== this.props.animationSpeed ||
@@ -53,7 +54,7 @@ export default class Art extends Component {
     }
   }
 
-  resetAnimation () {
+  resetAnimation() {
     const animationSpeed = this.props.animationSpeed;
     this.counter = 0;
 
@@ -94,7 +95,7 @@ export default class Art extends Component {
     }
   }
 
-  checkRepetation (path) {
+  checkRepetation(path) {
     if (path.length > 2 && path[0] === path[path.length - 1]) {
       return true;
     }
@@ -102,11 +103,11 @@ export default class Art extends Component {
     return false;
   }
 
-  rad (degree) {
+  rad(degree) {
     return Math.PI * degree / 180;
   }
 
-  drawSegment (index) {
+  drawSegment(index) {
     const centerPoint = this.props.size / 2;
     const angle1 = index * this.rad(this.props.speed1) + this.rad(this.props.offset1);
     const angle2 = index * this.rad(this.props.speed2) + this.rad(this.props.offset2);
@@ -122,7 +123,7 @@ export default class Art extends Component {
     return { start, end };
   }
 
-  render () {
+  render() {
     const size = this.props.size;
     const fill = this.props.fill;
 
@@ -136,7 +137,7 @@ export default class Art extends Component {
         width={size}
         height={size}
         fill={fill}
-        onClick={this.resetAnimation.bind(this)}>
+        onClick={this.props.onClick || this.resetAnimation.bind(this)}>
         <path
           stroke="#F00"
           d={pathData} />
