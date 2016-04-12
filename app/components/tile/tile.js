@@ -22,12 +22,11 @@ export default class Tile extends Component {
     children: PropTypes.any,
     frontSide: PropTypes.any,
     backSide: PropTypes.any,
-    foregroundColor: PropTypes.string,
-    backgroundColor: PropTypes.string,
     title: PropTypes.string,
     expandable: PropTypes.bool,
     expanded: PropTypes.bool,
     onToggleExpand: PropTypes.func,
+    onClick: PropTypes.func,
   };
 
   static getDimension() {
@@ -35,10 +34,8 @@ export default class Tile extends Component {
   }
 
   static defaultProps = {
-    foregroundColor: variables.colors.tileForeground,
-    backgroundColor: variables.colors.tileBackground,
     title: 'Dummy tile',
-    expandable: true,
+    expandable: false,
     expanded: false,
   };
 
@@ -82,9 +79,13 @@ export default class Tile extends Component {
   }
 
   render() {
+    const c = variables.colors;
+    const bColor = this.props.expanded ? c.tileExpandedBackground : c.tileBackground;
+    const fColor = this.props.expanded ? c.tileExpandedForeground : c.tileForeground;
+
     let styles = {
-      backgroundColor: this.props.backgroundColor,
-      color: this.props.foregroundColor,
+      backgroundColor: bColor,
+      color: fColor,
     };
 
     let frontControl, backControl;
@@ -137,20 +138,24 @@ export default class Tile extends Component {
     });
 
     let frontSide, backSide;
+    const tileContentStyle = {boxShadow: `2px 2px 0px 0px ${variables.colors.tileShadow}`};
+
+    // Render front side
     if (this.props.frontSide || this.props.children) {
       frontSide = (
         <div className={cx('tile__content', 'tile__content--front')}
-          style={{boxShadow: `2px 2px 1px 0px ${variables.colors.tileShadow}`}}>
+          style={tileContentStyle}>
           {this.props.frontSide ? this.props.frontSide : this.props.children}
           {frontControl}
         </div>
       );
     }
 
+    // Render back side
     if (this.props.backSide) {
       backSide = (
         <div className={cx('tile__content', 'tile__content--back')}
-          style={{boxShadow: `2px 2px 1px 0px ${variables.colors.tileShadow}`}}>
+          style={tileContentStyle}>
           {this.props.backSide}
           {backControl}
         </div>
@@ -164,6 +169,7 @@ export default class Tile extends Component {
         onMouseLeave={this.handleHover}
         onTouchStart={this.handleMouseTouch}
         onTouchEnd={this.handleMouseTouch}
+        onClick={this.props.onClick}
         >
           {frontSide}
           {backSide}

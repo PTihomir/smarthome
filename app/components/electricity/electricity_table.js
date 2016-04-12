@@ -1,106 +1,121 @@
 'use strict';
 import React, {Component, PropTypes} from 'react';
-import ElectricityItem from './item_electricity';
-import ElectricityItemEdit from './edit_electricity';
+import moment from 'moment';
 
-import Table from 'material-ui/lib/table/table';
-import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
-import TableHeader from 'material-ui/lib/table/table-header';
-import TableRow from 'material-ui/lib/table/table-row';
-import TableRowColumn from 'material-ui/lib/table/table-row-column';
-import TableBody from 'material-ui/lib/table/table-body';
+// import classes from './electricity.scss';
+
+// import classNames from 'classnames/bind';
+
+// import ElectricityItem from './item_electricity';
+// import ElectricityItemEdit from './edit_electricity';
+
+import { AutoSizer, FlexTable, FlexColumn } from 'react-virtualized';
+import 'react-virtualized/styles.css';
+
+import IconButton from 'material-ui/lib/icon-button';
+import FontIcon from 'material-ui/lib/font-icon';
+
+// let cx = classNames.bind(classes);
 
 export default class ElectricityTable extends Component {
 
   static propTypes = {
     list: PropTypes.array,
-    showNewForm: PropTypes.bool,
-    editItem: PropTypes.any,
-    onSave: PropTypes.func,
-    onDelete: PropTypes.func,
+    onDeleteItem: PropTypes.func,
     onEditItem: PropTypes.func,
-    onCancel: PropTypes.func,
   };
 
   static defaultProps = {
     list: [],
   };
 
-  constructor() {
-    super();
-    this.onEdit = this.onEdit.bind(this);
-    this.saveEdit = this.saveEdit.bind(this);
-    this.cancelEdit = this.cancelEdit.bind(this);
-    this.deleteItem = this.deleteItem.bind(this);
+  constructor(props) {
+    super(props);
+    // this.onEdit = this.onEdit.bind(this);
+    // this.deleteItem = this.deleteItem.bind(this);
   }
 
-  onEdit(id) {
-    this.props.onEditItem(id);
-  }
-
-  saveEdit(data) {
-    this.props.onSave(data);
-  }
-
-  cancelEdit() {
-    this.props.onCancel();
+  onEdit(timestamp) {
+    this.props.onEditItem(timestamp);
   }
 
   deleteItem(timestamp) {
-    this.props.onDelete({
+    this.props.onDeleteItem({
       timestamp: timestamp,
     });
   }
 
+  renderButtons(cellData, cellDataKey, rowData) {
+    return (
+      <div>
+        <IconButton style={{width: '36px', height: '30px', padding: '3px 6px'}}
+          onClick={() => { this.onEdit(rowData.timestamp); }}>
+          <FontIcon className="material-icons">create</FontIcon>
+        </IconButton>
+        <IconButton style={{width: '36px', height: '30px', padding: '3px 6px'}}
+          onClick={() => { this.deleteItem(rowData.timestamp); }}>
+          <FontIcon className="material-icons">delete</FontIcon>
+        </IconButton>
+      </div>
+    );
+  }
+
   render() {
     const list = this.props.list;
+    let headerHeight = 40;
+    let rowHeight = 30;
+    let datetimeColumnWidth = 130;
 
-    let body;
-    let newForm;
-
-    if (list.length > 0) {
-      body = list.map((elec, idx) => {
-        if (elec.timestamp === this.props.editItem) {
-          return (<ElectricityItemEdit key={elec.timestamp} {...elec}
-            freezeDatetime
-            onSave={this.saveEdit}
-            onCancel={this.cancelEdit} />);
-        } else {
-          return (<ElectricityItem key={elec.timestamp} {...elec}
-            onEdit={() => { this.onEdit(elec.timestamp); }}
-            onDelete={() => { this.deleteItem(elec.timestamp); }}/>);
-        }
-      });
-    } else {
-      body = (
-        <TableRow>
-          <TableRowColumn>Empty list</TableRowColumn>
-        </TableRow>
-      );
-    }
-
-    if (this.props.showNewForm) {
-      newForm = (
-        <ElectricityItemEdit onSave={this.saveEdit} onCancel={this.cancelEdit}/>
-      );
+    if (matchMedia('only screen and (max-width: 480px)').matches) {
+      headerHeight = 30;
+      rowHeight = 20;
+      datetimeColumnWidth = 100;
     }
 
     return (
-      <Table selectable={false} height="200px">
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn>Datetime</TableHeaderColumn>
-            <TableHeaderColumn>High cost</TableHeaderColumn>
-            <TableHeaderColumn>Low cost</TableHeaderColumn>
-            <TableHeaderColumn />
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false}>
-          {/* Add row for the New button */}
-          {newForm}
-          {body}
-        </TableBody>
-      </Table>
+        <AutoSizer>
+        {({ height, width }) => (
+          <FlexTable
+            width={width}
+            height={height}
+            headerHeight={headerHeight}
+            rowHeight={rowHeight}
+            rowGetter={(index) => list[index]}
+            rowsCount={list.length}
+          >
+            <FlexColumn
+              label="Datetime"
+              dataKey="timestamp"
+              flexShrink={0}
+              flexGrow={1}
+              width={datetimeColumnWidth}
+              cellRenderer={(cellData) => `${moment(cellData).format('YYYY/MM/D H')}h`}
+            />
+            <FlexColumn
+              label="High cost"
+              dataKey="high_cost"
+              flexGrow={1}
+              width={90}
+              cellRenderer={(cellData) => `${cellData}kWh`}
+            />
+            <FlexColumn
+              label="Low cost"
+              dataKey="low_cost"
+              flexGrow={1}
+              width={90}
+              cellRenderer={(cellData) => `${cellData}kWh`}
+            />
+            <FlexColumn
+              label=""
+              dataKey="actions"
+              flexGrow={0}
+              flexShrink={0}
+              width={80}
+              cellDataGetter={(dataKey, rowData) => ''}
+              cellRenderer={this.renderButtons.bind(this)}
+            />
+          </FlexTable>)}
+        </AutoSizer>
     );
   }
 }

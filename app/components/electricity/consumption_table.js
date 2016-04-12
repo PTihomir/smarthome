@@ -1,18 +1,15 @@
 'use strict';
 import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
-import ElectricityConsItem from './item_consumption';
-import RaisedButton from 'material-ui/lib/raised-button';
 
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
+import classes from './electricity.scss';
 
-import Table from 'material-ui/lib/table/table';
-import TableHeaderColumn from 'material-ui/lib/table/table-header-column';
-import TableHeader from 'material-ui/lib/table/table-header';
-import TableRow from 'material-ui/lib/table/table-row';
-import TableRowColumn from 'material-ui/lib/table/table-row-column';
-import TableBody from 'material-ui/lib/table/table-body';
+import classNames from 'classnames/bind';
+
+import { AutoSizer, FlexTable, FlexColumn } from 'react-virtualized';
+import 'react-virtualized/styles.css';
+
+let cx = classNames.bind(classes);
 
 export default class ConsumptionTable extends Component {
   static propTypes = {
@@ -29,35 +26,62 @@ export default class ConsumptionTable extends Component {
   render() {
     const list = this.props.list;
 
-    let body;
+    const powerCellRenderer = (cellData) => cellData ? `${Math.round(cellData)}kWh` : '-';
 
-    if (list.length > 0) {
-      body = list.map((elec, idx) => {
-        return (<ElectricityConsItem key={elec.timestamp} {...elec}/>);
-      });
-    } else {
-      body = (
-        <TableRow>
-          <TableRowColumn>Empty list</TableRowColumn>
-        </TableRow>
-      );
+    let headerHeight = 40;
+    let rowHeight = 30;
+    let datetimeColumnWidth = 130;
+
+    if (matchMedia('only screen and (max-width: 480px)').matches) {
+      headerHeight = 30;
+      rowHeight = 20;
+      datetimeColumnWidth = 100;
     }
 
     return (
-      <Table selectable={false}
-        height="200px">
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn>Month</TableHeaderColumn>
-            <TableHeaderColumn>Day consumption</TableHeaderColumn>
-            <TableHeaderColumn>Night consumption</TableHeaderColumn>
-            <TableHeaderColumn>Summ</TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false}>
-          {body}
-        </TableBody>
-      </Table>
+        <AutoSizer>
+        {({ height, width }) => (
+          <FlexTable
+            width={width}
+            height={height}
+            headerHeight={headerHeight}
+            rowClassName={cx('FlexTable__row')}
+            rowHeight={rowHeight}
+            rowGetter={(index) => list[index]}
+            rowsCount={list.length}
+          >
+            <FlexColumn
+              label="Month"
+              dataKey="timestamp"
+              flexShrink={0}
+              flexGrow={1}
+              width={datetimeColumnWidth}
+              cellRenderer={(cellData) => `${moment(cellData).format('YYYY MMM')}`}
+            />
+            <FlexColumn
+              label="Day"
+              dataKey="day"
+              flexGrow={1}
+              width={90}
+              cellRenderer={powerCellRenderer}
+            />
+            <FlexColumn
+              label="Night"
+              dataKey="night"
+              flexGrow={1}
+              width={90}
+              cellRenderer={powerCellRenderer}
+            />
+            <FlexColumn
+              label="Sum"
+              dataKey="sum"
+              flexGrow={1}
+              width={90}
+              cellDataGetter={(dataKey, rowData) => Math.round(rowData.night + rowData.day)}
+              cellRenderer={powerCellRenderer}
+            />
+          </FlexTable>)}
+        </AutoSizer>
     );
   }
 }

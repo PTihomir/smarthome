@@ -15,6 +15,8 @@ export default {
     tileLayoutBackground: '#FEFEFF',
     tileForeground: '#333',
     tileBackground: '#B9D7D9',
+    tileExpandedBackground: '#D9E7E9',
+    tileExpandedForeground: '#333',
     tileShadow: '#668284',
 
     tileControlBackground: '#4A4F4A',

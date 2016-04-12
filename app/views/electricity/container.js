@@ -18,7 +18,7 @@ export const dimension = {
   expHeight: 2,
 };
 
-export default class TileElectricity extends Component {
+export default class ElectricityTile extends Component {
   static propTypes = {
     gridSize: PropTypes.number,
     color: PropTypes.string,

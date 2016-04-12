@@ -42,7 +42,9 @@ module.exports = {
       },
       { test: /\.scss$/, loader: 'style-loader!css-loader?modules&sourceMap!sass-loader' }, // use ! to chain loaders
       // { test: /\.scss$/, loader: ExtractTextPlugin.extract('style', 'css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!sass-loader')}, // use ! to chain loaders
-      { test: /\.css$/, loader: 'style-loader!css-loader?modules&sourceMap' },
+      { test: /\.css$/, loader: 'style-loader!css-loader?modules&sourceMap', exclude: /node_modules\/.*\.css$/ },
+      { test: /node_modules\/.*\.css$/, loader: 'style-loader!css-loader' },
+      // { test: /react-virtualized\/styles\.css$/, loader: 'style-loader!css-loader' },
       // { test: /\.svg(\?.*)?$/, loader: 'file-loader?name=[name].[ext]' },
     ],
   },
